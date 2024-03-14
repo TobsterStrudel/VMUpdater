@@ -149,6 +149,19 @@ proc SSL_cert {CRT USERNAME PASSWORD} {
     return
 }
 
+proc change_password {USERNAME newPASSWORD PIN} {
+    set timeout 120
+    global ssh_spawnID
+    set spawn_id $ssh_spawnID
+    expect "$ "
+    send "fmsadmin resetpw -p $newPASSWORD -z $PIN\r"
+    expect "username (*):"
+    send "$USERNAME\r"
+    expect "password:"
+    send "$PASSWORD\r"
+    expect "$ "
+    return
+}
 proc ssh_connection {sshUSR USERNAME SERVER PASSWORD REMOTE_DIR LOCAL_DIR hasCRED DEV FMS_V ARC FTI PIN CRT} {
     set timeout 120
     spawn ssh -i /Users/tobias/Desktop/AutoUpdatercopy/AutoUpdater/tobias.pem "$sshUSR@$SERVER"
