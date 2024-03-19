@@ -162,6 +162,16 @@ proc change_password {USERNAME newPASSWORD PIN} {
     expect "$ "
     return
 }
+
+proc encrypt_file {FILE TARGET_FILE sharedID PASSWORD} {
+    set timeout 120
+    global ssh_spawnID
+    set spawn_id $ssh_spawnID
+    expect "$ "
+    send "cd /FM location\r" ; # TODO
+    expect "$ "
+    send "./FMDeveloperTool --enableEncryption $FILE -target_file $TARGET_FILE  -sharedID $sharedID -passCode $PASSWORD\r"
+}
 proc ssh_connection {sshUSR USERNAME SERVER PASSWORD REMOTE_DIR LOCAL_DIR hasCRED DEV FMS_V ARC FTI PIN CRT} {
     set timeout 120
     spawn ssh -i /Users/tobias/Desktop/AutoUpdatercopy/AutoUpdater/tobias.pem "$sshUSR@$SERVER"
