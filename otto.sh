@@ -1,16 +1,32 @@
 #!/bin/sh
-set SERVER [lindex $argv 0]
-set USERNAME [lindex $argv 1]
-set PASSWORD [lindex $argv 2]
-set sshUSR [lindex $argv 3]
+set DISPLACE 0
+set AWS 0
+foreach arg $argv {
+    switch -glob -- $arg {
+        "-a" {
+            set AWS 1
+            set kfDIR [lindex $argv [expr {[lsearch $argv $arg] + 1}]]
+            incr DISPLACE 2
+        }
+    }
+}
+set SERVER [lindex $argv 0+$DISPLACE]
+set USERNAME [lindex $argv 1+$DISPLACE]
+set PASSWORD [lindex $argv 2+$DISPLACE]
+set sshUSR [lindex $argv 3+$DISPLACE]
 
 proc updateOtto {SERVER USERNAME PASSWORD sshUSR} {
     set timeout 120
-    spawn ssh "$sshUSR@$SERVER"
+    if {AWS} {
+        spawn ssh -i $kfDIR "$sshUSR@$SERVER"
+    } else {
+        spawn ssh "$sshUSR@$SERVER"
+        expect "*password:"
+        send "$PASSWORD\r"
+    }
     global ssh_spawnID
     set ssh_spawnID $spawn_id
-    expect "*password:"
-    send "$PASSWORD\r"
+    
     expect "$ "
     send "sudo which\r"
     expect "*$sshUSR:"
