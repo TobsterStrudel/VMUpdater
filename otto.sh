@@ -13,11 +13,11 @@ foreach arg $argv {
 }
 set SERVER [lindex $argv 0]
 set USERNAME [lindex $argv 1]
-set sshUSR [lindex $argv 2]
+set sshUSR [lindex $argv 4]
 
-proc updateOtto {SERVER USERNAME PASSWORD sshUSR} {
+proc updateOtto {SERVER USERNAME PASSWORD sshUSR AWS} {
     set timeout 120
-    if {AWS} {
+    if {$AWS} {
         spawn ssh -i $kfDIR "$sshUSR@$SERVER"
     } else {
         spawn ssh "$sshUSR@$SERVER"
@@ -36,4 +36,4 @@ proc updateOtto {SERVER USERNAME PASSWORD sshUSR} {
     expect "$ "
     send "exit"
 }
-updateOtto $SERVER $USERNAME $PASSWORD $sshUSR
+updateOtto $SERVER $USERNAME $PASSWORD $sshUSR $AWS
