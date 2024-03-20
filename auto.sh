@@ -181,7 +181,7 @@ proc ssh_connection {sshUSR USERNAME SERVER PASSWORD REMOTE_DIR LOCAL_DIR hasCRE
 #    send "$PASSWORD\r"
 #    expect "$ "
 #    send "sudo which\r"
-#    expect "*icadmin:"
+#    expect "*$USERNAME:"
 #    send "$PASSWORD\r"
     expect "$ "
     send "cd $REMOTE_DIR/$LOCAL_DIR\r"
