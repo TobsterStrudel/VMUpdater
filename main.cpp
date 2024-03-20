@@ -29,13 +29,15 @@ std::vector<ServerInfo> parseFile(const std::string& filename) {
         }
     while (std::getline(file, line)) {
         std::istringstream iss(line);
-        std::string server, username, password, sshUSR, AWS;
-        if (iss >> server >> username >> password >> sshUSR >> AWS ){                       //5 args, AWS pem
+        std::string server, sshUSR, password, AWS;
+        if(line[0] == '#'){ //Allow for comments in server list
+            continue;
+        }
+        if (iss >> server >> password >> sshUSR >> name >> AWS ){                       //5 args, AWS pem
             std::string ppkDir = "FULL-PATH-TO-PPK/";
-            std::string name = password;
-            serverInfoList.push_back({server, username, "-a " + keyGen(ppkDir, name), sshUSR, true});
+            serverInfoList.push_back({server, sshUSR, password, "-k " + keyGen(ppkDir, name)});
         } else{                                                                              //4 args trad password
-            serverInfoList.push_back({server, username, "-p " + password, sshUSR, false});
+            serverInfoList.push_back({server, sshUSR, password, "nokey"});
         }
     }
     return serverInfoList;
@@ -45,9 +47,9 @@ void ottoUpdate(std::vector<ServerInfo> serverInfoList){
     for(const auto& info : serverInfoList){
         std::string cmd = "expect ~/VMUpdater/otto.sh " +
         info.server + " " +
-        info.username + " " +
+        info.sshUSR + " " +
         info.password + " " +
-        info.sshUSR;
+        info.key;
         system(cmd.c_str());
     }
 }
