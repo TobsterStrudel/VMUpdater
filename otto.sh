@@ -1,19 +1,19 @@
 #!/bin/sh
-set DISPLACE 0
 set AWS 0
 foreach arg $argv {
     switch -glob -- $arg {
         "-a" {
             set AWS 1
             set kfDIR [lindex $argv [expr {[lsearch $argv $arg] + 1}]]
-            incr DISPLACE 2
+        }
+        "-p" {
+            set PASSWORD [lindex $argv [expr {[lsearch $argv $arg] + 1}]]
         }
     }
 }
-set SERVER [lindex $argv 0+$DISPLACE]
-set USERNAME [lindex $argv 1+$DISPLACE]
-set PASSWORD [lindex $argv 2+$DISPLACE]
-set sshUSR [lindex $argv 3+$DISPLACE]
+set SERVER [lindex $argv 0]
+set USERNAME [lindex $argv 1]
+set sshUSR [lindex $argv 2]
 
 proc updateOtto {SERVER USERNAME PASSWORD sshUSR} {
     set timeout 120
