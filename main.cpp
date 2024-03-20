@@ -12,7 +12,7 @@ struct ServerInfo {
     bool AWS;
 };
 std::string keyGen(std::string ppk, std::string name){
-    std::string puttygenPath = "/opt/homebrew/bin/puttygen";
+    std::string puttygenPath = "FULL-PATH-TO/puttygen";
     std::string cmd = puttygenPath + " " + ppk + name + ".ppk -O private-openssh -o " + ppk + name + ".pem";
     system(cmd.c_str());
     cmd = "chmod 400 " + ppk + name + ".pem";
@@ -31,8 +31,8 @@ std::vector<ServerInfo> parseFile(const std::string& filename) {
         std::istringstream iss(line);
         std::string server, username, password, sshUSR, AWS;
         if (iss >> server >> username >> password >> sshUSR >> AWS ){                       //5 args, AWS pem
-            std::string ppkDir = "/Users/tobias/Desktop/AutoUpdatercopy/AutoUpdater/";
-            std::string name = "olive_key";
+            std::string ppkDir = "FULL-PATH-TO-PPK/";
+            std::string name = password;
             serverInfoList.push_back({server, username, "-a " + keyGen(ppkDir, name), sshUSR, true});
         } else{                                                                              //4 args trad password
             serverInfoList.push_back({server, username, "-p " + password, sshUSR, false});
@@ -42,7 +42,6 @@ std::vector<ServerInfo> parseFile(const std::string& filename) {
 }
 
 void ottoUpdate(std::vector<ServerInfo> serverInfoList){
-    
     for(const auto& info : serverInfoList){
         std::string cmd = "expect ~/VMUpdater/otto.sh " +
         info.server + " " +
