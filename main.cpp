@@ -9,6 +9,7 @@ struct ServerInfo {
     std::string username;
     std::string password;
     std::string sshUSR;
+    bool AWS;
 };
 std::vector<ServerInfo> parseFile(const std::string& filename) {
     std::vector<ServerInfo> serverInfoList;
@@ -20,12 +21,12 @@ std::vector<ServerInfo> parseFile(const std::string& filename) {
         }
     while (std::getline(file, line)) {
         std::istringstream iss(line);
-        std::string server, username, password, sshUSR;
-        if (!(iss >> server >> username >> password >> sshUSR)) {
-            std::cerr << "Error parsing line: " << line << std::endl;
-            continue;
+        std::string server, username, password, sshUSR, AWS;
+        if (iss >> server >> username >> password >> sshUSR >> AWS ){                       //5 args, AWS pem
+            serverInfoList.push_back({server, username, "-a " + password, sshUSR, true});
+        } else{                                                                              //4 args trad password
+            serverInfoList.push_back({server, username, "-p " + password, sshUSR, false});
         }
-        serverInfoList.push_back({server, username, password, sshUSR});
     }
     return serverInfoList;
 }
@@ -44,6 +45,6 @@ void ottoUpdate(std::vector<ServerInfo> serverInfoList){
 int main() {
     std::string serverList = "FULL-PATH-TO/serverList.txt";
     std::vector<ServerInfo> serverInfoList = parseFile(serverList);
-    ottoUpdate(serverInfoList);
+//    ottoUpdate(serverInfoList);
     return 0;
 }
